@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<!-- 	<meta name="viewport" content="width=device-width, initial-scale=1"> -->
+	<link rel="shortcut icon" href="img/L.ico">
+	<script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
+	<title>Colo Picker</title>
+	<style type="text/css">
+		@font-face { 
+			font-family: 'AdelleBasic'; 
+			src: url("Font/adellebasic_bold-webfont.ttf") format("truetype");
+		}
+		#main{
+			text-align: center;
+			display: none;
+		}
+		#topmsg{
+			font-size: 3em;
+			font-family: 华文行楷;
+			color: #248937;
+			text-shadow:-2px 2px 5px #FFF;
+		}
+		#color_frame{
+			border: 2em solid;
+			border-radius: 1em;
+			margin: 0 auto;
+			background-color: #FFFFFF;
+			width: 42em;
+			height: 7.8em;
+			box-shadow: 10px 10px 10px #000;
+		}
+		#show_color{
+			width: 10em;
+			height: 6.18em;
+			margin: 0.9em;
+			float: left;
+			border-radius: 2em;
+
+		}
+		.little_div{
+			text-align: left;
+			float: left;
+			color: #91C5AA;
+			padding: 0.5em;
+			line-height: 2.3em;
+		}
+		input[type=range]{
+			width: 24em;
+		}
+		.result{
+			width: 12em;
+			padding: 0.3em;
+			margin: 1em;
+			font-size: 1.2em;
+			text-align: center;
+			font-family: Helvetica;
+		}
+	</style>
+	<script type="text/javascript">
+		// 配合onmousemove="Get_color()"使用
+		// function Get_color(){
+		// 	var H=$('#H').val();
+		// 	var S=$('#S').val();
+		// 	var L=$('#L').val();
+		// 	rgb="rgb("+ H + "," + S + "," + L + ")";
+		// 	document.write(rgb);
+		// 	$('#color_frame').css("background-color",rgb);
+		// 	$('#show_color').css("background-color",rgb); 
+		// };
+		//这里用jQurey实现
+		$(document).ready(function(){//设计随机的初始颜色
+			$('#H').val(270-Math.random()*180);
+			$('#L').val(75-Math.random()*50);
+			$('#S').val(75-Math.random()*50);
+			$('#main').show();
+			Calulate();
+		});
+		$(document).mousemove(function(){//随设计值改变的颜色
+
+			Calulate();
+		});
+		function Calulate()
+		{
+			var H=$('#H').val();
+			var S=$('#S').val();
+			var L=$('#L').val();
+			hsl="hsl("+ H + "," + S + "%," + L + "%)";
+			$('#color_frame').css("border-color",hsl);
+			$('#show_color').css("background-color",hsl);
+			$('#H_val').val(H);
+			$('#S_val').val(S);
+			$('#L_val').val(L);
+			//从HSL转化为RGB
+			var C=(1-Math.abs(2*L/100-1))*S/100;
+			var H_1=H/60;
+			var X=C*(1-Math.abs(H_1%2-1));
+			var H_2=Math.floor(H_1);
+			var R_1,G_1,B_1;
+			switch (H_2)
+			{
+				case 0:
+				R_1=C;G_1=X;B_1=0;
+				break;
+				case 1:
+				R_1=X;G_1=C;B_1=0;
+				break;
+				case 2:
+				R_1=0;G_1=C;B_1=X;
+				break;
+				case 3:
+				R_1=0;G_1=X;B_1=C;
+				break;
+				case 4:
+				R_1=X;G_1=0;B_1=C;
+				break;
+				case 5:
+				R_1=C;G_1=0;B_1=X;
+				default:
+				R_1=0;G_1=0;B_1=0;
+			}
+			var m=L/100-1/2*C;
+			R=Math.round((R_1+m)*255);
+			G=Math.round((G_1+m)*255);
+			B=Math.round((B_1+m)*255);
+			var rgb="rgb("+ R + "," + G + "," + B + ")";
+			var HEX1=R.toString(16);
+			var HEX2=G.toString(16);
+			var HEX3=B.toString(16);
+			HEX1=HEX1.toUpperCase();
+			HEX2=HEX2.toUpperCase();
+			HEX3=HEX3.toUpperCase();
+			$('#RGB').val(rgb);
+			$('#HEX').val('#'+HEX1+HEX2+HEX3);
+			$('#HSL').val(hsl);
+		}
+	</script>
+</head>
+<body bgcolor="#40362B">
+	<div id="main">
+		<p id="topmsg">选取你喜欢的颜色！</p>
+
+		<div id="color_frame">
+			<div id="show_color">
+			</div>
+			<div class="little_div">
+				色调<br>
+				饱和度<br>
+				亮度<br>
+			</div>
+			<div class="little_div">
+				<input type="range" id="H" min="0" max="360" ><br>
+				<input type="range" id="S" min="0" max="100" ><br>
+				<input type="range" id="L" min="0" max="100" ><br>
+			</div>
+			<div class="little_div">
+				<input type="text" id="H_val" style="width: 30px"><br>
+				<input type="text" id="S_val" style="width: 30px"><br>
+				<input type="text" id="L_val" style="width: 30px"><br>
+			</div>
+		</div>
+		<br>
+		<br>
+		<input type="text" id="HEX" class="result">
+		<input type="text" id="RGB" class="result">
+		<input type="text" id="HSL" class="result">
+	</div>
+</body>
+</html>
