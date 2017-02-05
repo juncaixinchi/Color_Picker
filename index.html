@@ -1,42 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<!-- 	<meta name="viewport" content="width=device-width, initial-scale=1"> -->
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="shortcut icon" href="img/L.ico">
-	<script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
-	<title>Colo Picker</title>
+	<script src="js/jquery-3.1.1.min.js"></script>
+	<title>Colo Picker</title>	
 	<style type="text/css">
 		@font-face { 
 			font-family: 'AdelleBasic'; 
 			src: url("Font/adellebasic_bold-webfont.ttf") format("truetype");
 		}
-		#main{
-			text-align: center;
-			display: none;
+		html { 
+			background: linear-gradient(45deg, #262626 25%, #222 0, #222 50%, #262626 0, #262626 75%, #222 0);
+			background-size: 100px 100px;
+			font-family: Consolas;
+			font-weight: bold;
 		}
-		#topmsg{
-			font-size: 3em;
-			font-family: 华文行楷;
-			color: #248937;
-			text-shadow:-2px 2px 5px #FFF;
-		}
-		#color_frame{
-			border: 2em solid;
-			border-radius: 1em;
-			margin: 0 auto;
-			background-color: #FFFFFF;
-			width: 42em;
-			height: 7.8em;
-			box-shadow: 10px 10px 10px #000;
-		}
-		#show_color{
-			width: 10em;
-			height: 6.18em;
-			margin: 0.9em;
-			float: left;
-			border-radius: 2em;
-
+		input[type="range"]{
+			width: 340px;
 		}
 		.little_div{
 			text-align: left;
@@ -45,16 +27,55 @@
 			padding: 0.5em;
 			line-height: 2.3em;
 		}
-		input[type=range]{
-			width: 24em;
-		}
+
 		.result{
 			width: 12em;
 			padding: 0.3em;
 			margin: 1em;
 			font-size: 1.2em;
 			text-align: center;
-			font-family: Helvetica;
+
+			float: left;
+			background-color: #F2F2F2;
+		}
+		.footer{
+			position: fixed;
+			clear:both;
+			bottom: 2em;
+			width: 100%;
+			text-align: center;
+			font-size: 15px;
+			color: #FFF;
+		}
+		#main{
+			text-align: center;
+			display: none;
+		}
+		#topmsg{
+			font-size: 3em;
+
+			color: #DAE6E7;
+		}
+		#color_frame{
+			border: 2em solid;
+			border-radius: 1em;
+			margin: 0em auto;
+			background-color: #FFFFFF;
+			width: 42em;
+			height: 7.8em;
+			box-shadow: 10px 10px 10px #000;
+		}
+		#show_color{
+			width: 6.18em;
+			height: 6.18em;
+			margin: 0.9em;
+			float: left;
+			border-radius: 3.09em;
+		}
+		#result_frame{
+			width: 52.65em;
+			margin: 0em auto;
+			background-color: #FFFFFF;
 		}
 	</style>
 	<script type="text/javascript">
@@ -75,11 +96,21 @@
 			$('#S').val(75-Math.random()*50);
 			$('#main').show();
 			Calulate();
+			$("#set_range").mousemove(function(){//随设计值改变的颜色
+				Calulate();
+			});
+			$("#set_range_by_val").change(function(){
+				var H=$('#H_val').val();
+				var S=$('#S_val').val();
+				var L=$('#L_val').val();
+				$('#H').val(H);
+				$('#S').val(S);
+				$('#L').val(L);
+				Calulate();
+			});
 		});
-		$(document).mousemove(function(){//随设计值改变的颜色
 
-			Calulate();
-		});
+
 		function Calulate()
 		{
 			var H=$('#H').val();
@@ -88,6 +119,8 @@
 			hsl="hsl("+ H + "," + S + "%," + L + "%)";
 			$('#color_frame').css("border-color",hsl);
 			$('#show_color').css("background-color",hsl);
+			var val_shadow="-3px 3px 10px "+ hsl;
+			$('#topmsg').css("text-shadow",val_shadow);
 			$('#H_val').val(H);
 			$('#S_val').val(S);
 			$('#L_val').val(L);
@@ -130,13 +163,13 @@
 			HEX1=HEX1.toUpperCase();
 			HEX2=HEX2.toUpperCase();
 			HEX3=HEX3.toUpperCase();
-			$('#RGB').val(rgb);
-			$('#HEX').val('#'+HEX1+HEX2+HEX3);
-			$('#HSL').val(hsl);
+			$('#RGB').html(rgb);
+			$('#HEX').html('#'+HEX1+HEX2+HEX3);
+			$('#HSL').html(hsl);
 		}
 	</script>
 </head>
-<body bgcolor="#40362B">
+<body>
 	<div id="main">
 		<p id="topmsg">选取你喜欢的颜色！</p>
 
@@ -144,16 +177,16 @@
 			<div id="show_color">
 			</div>
 			<div class="little_div">
-				色调<br>
-				饱和度<br>
-				亮度<br>
+				色调（H）<br>
+				饱和度（S）<br>
+				亮度（L）<br>
 			</div>
-			<div class="little_div">
+			<div class="little_div" id="set_range">
 				<input type="range" id="H" min="0" max="360" ><br>
 				<input type="range" id="S" min="0" max="100" ><br>
 				<input type="range" id="L" min="0" max="100" ><br>
 			</div>
-			<div class="little_div">
+			<div class="little_div" id="set_range_by_val">
 				<input type="text" id="H_val" style="width: 30px"><br>
 				<input type="text" id="S_val" style="width: 30px"><br>
 				<input type="text" id="L_val" style="width: 30px"><br>
@@ -161,9 +194,12 @@
 		</div>
 		<br>
 		<br>
-		<input type="text" id="HEX" class="result">
-		<input type="text" id="RGB" class="result">
-		<input type="text" id="HSL" class="result">
+		<div id="result_frame">
+			<div id="HEX" class="result"></div>
+			<div id="RGB" class="result"></div>
+			<div id="HSL" class="result"></div>
+		</div>
 	</div>
+	<div class="footer">Copyright © 2017 <a href="https://github.com/juncaixinchi" target="_blank">Juncaixinchi</a>.</div>
 </body>
 </html>
